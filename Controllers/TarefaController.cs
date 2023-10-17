@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using TrilhaApiDesafio.Context;
 using TrilhaApiDesafio.Models;
 
+
+
 namespace TrilhaApiDesafio.Controllers
 {
     [ApiController]
@@ -73,8 +75,9 @@ namespace TrilhaApiDesafio.Controllers
         public IActionResult Atualizar(int id, Tarefa tarefa)
         {
 
+            var tarafaExistente = _context.Tarefas.FirstOrDefault(op => op.Id == id);
 
-            if (tarefa.Id == null) {
+            if ( tarafaExistente == null) {
                 return NotFound();
             }
                 
@@ -82,9 +85,9 @@ namespace TrilhaApiDesafio.Controllers
                 return BadRequest(new { Erro = "A data da tarefa não pode ser vazia" });
             }
                 
-            _context.Entry(tarefa).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _context.Entry(tarafaExistente).CurrentValues.SetValues(tarefa);
             _context.SaveChanges();
-            return Ok(tarefa);
+            return Ok(tarafaExistente);
         }
 
         [HttpDelete("{id}")]
